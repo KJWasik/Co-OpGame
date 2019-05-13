@@ -30,6 +30,8 @@ ASWeapon::ASWeapon()
 	BaseDamage = 20.0f;
 
 	RateOfFire = 600;
+
+	SetReplicates(true);
 }
 
 void ASWeapon::BeginPlay()
@@ -40,6 +42,11 @@ void ASWeapon::BeginPlay()
 
 void ASWeapon::Fire()
 {
+	if (Role < ROLE_Authority)
+	{
+		ServerFire();
+	}
+
 	AActor* MyOwner = GetOwner();
 	if (MyOwner)
 	{
@@ -117,6 +124,17 @@ void ASWeapon::StopFire()
 {
 	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
+
+void ASWeapon::ServerFire_Implementation()
+{
+	Fire();
+}
+
+bool ASWeapon::ServerFire_Validate()
+{
+	return true;
+}
+
 
 void ASWeapon::PlayFireEffects(FVector TracerEnd)
 {
