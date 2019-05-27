@@ -9,9 +9,54 @@
 /**
  * 
  */
+
+enum class EWaveState : uint8;
+
 UCLASS()
 class COOPGAME_API ASGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+protected:
+	FTimerHandle TimerHandle_BotSpawner;
+
+	FTimerHandle TimerHandle_NextWaveStart;
+
+	// Bots to spawn in current wave
+	int32 NumberOfBotsToSpawn;
+
+	int32 WaveCount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "GameMode")
+	float TimeBetweenWaves;
+
+	// Hook for BP to spawn single bot
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
+	void SpawnNewBot();
+
+	void SpawnBotTimerElapsed();
+
+	// Start spawning bots
+	void StartWave();
+
+	// Stop spawning bots
+	void EndWave();
+
+	// Set timer for next startwave
+	void PrepareForNextWave();
+
+	void CheckWaveState();
+
+	void CheckAnyPlayerAlive();
+
+	void GameOver();
+
+	void SetWaveState(EWaveState NewState);
+
+public:
+	ASGameMode();
+
+	virtual void StartPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 };
